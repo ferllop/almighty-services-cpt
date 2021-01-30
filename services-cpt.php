@@ -85,12 +85,7 @@ function build_template(){
 		'placeholder' => 'Descripción del servicio'
 	));
 
-	$result[] = array( 'core/block', array(
-		'ref' => 216 //one-random-review
-	) );
-	$result[] = array( 'core/block', array(
-		'ref' => 237 //pricing
-	) );
+	$result[] = array( 'almighty-services-cpt/prices-columns', array() );
 
 	return $result;
 }
