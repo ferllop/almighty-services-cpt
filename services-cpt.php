@@ -8,7 +8,7 @@ Author: Ferran Llop
 Author URI: https://ferranllop.com/
 */
 
-add_action( 'init', 'almighty_services_post_type', 0 );
+add_action( 'init', 'almighty_services_post_type' );
 if ( ! function_exists('almighty_services_post_type') ) {
 	function almighty_services_post_type() {
 
@@ -42,10 +42,8 @@ if ( ! function_exists('almighty_services_post_type') ) {
 			'filter_items_list'     => __( 'Filter services list', 'almighty-services-cpt' ),
 		);
 		$rewrite = array(
-			'slug'                  => 'servicios',
-			'with_front'            => true,
-			'pages'                 => true,
-			'feeds'                 => true,
+			'slug'                  => '/',
+			'with_front'            => false
 		);
 		$args = array(
 			'label'                 => __( 'Service', 'almighty-services-cpt' ),
@@ -62,7 +60,7 @@ if ( ! function_exists('almighty_services_post_type') ) {
 			'show_in_admin_bar'     => true,
 			'show_in_nav_menus'     => true,
 			'can_export'            => true,
-			'has_archive'           => true,
+			'has_archive'           => false,
 			'exclude_from_search'   => false,
 			'publicly_queryable'    => true,
 			'rewrite'               => $rewrite,
@@ -90,6 +88,31 @@ function build_template(){
 	return $result;
 }
 
+
+add_action( 'pre_get_posts', 'add_cpt_post_names_to_main_query' );
+function add_cpt_post_names_to_main_query( $query ) {
+ if ( ! $query->is_main_query() ) {
+     return;
+ }
+
+ // if this query doesn't match our very specific rewrite rule.
+ if ( ! isset( $query->query['page'] ) || 2 !== count( $query->query ) ) {
+     return;
+ }
+
+ // if we're not querying based on the post name.
+ if ( empty( $query->query['name'] ) ) {
+     return;
+ }
+
+ // Add CPT to the list of post types WP will include when it queries based on the post name.
+ $query->set( 'post_type', array( 'post', 'page', 'services' ) );
+}
+
+register_activation_hook(__FILE__,'my_custom_plugin_activate');
+function my_custom_plugin_activate() {
+    flush_rewrite_rules();
+}
 
 /*
 * Register Custom Blocks
