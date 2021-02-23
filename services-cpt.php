@@ -42,8 +42,8 @@ if ( ! function_exists('almighty_services_post_type') ) {
 			'filter_items_list'     => __( 'Filter services list', 'almighty-services-cpt' ),
 		);
 		$rewrite = array(
-			'slug'                  => '/services',
-			'with_front'            => false
+			'slug'                  => 'servicios',
+			'with_front'            => false,
 		);
 		$args = array(
 			'label'                 => __( 'Service', 'almighty-services-cpt' ),
@@ -86,39 +86,6 @@ function build_template(){
 	$result[] = array( 'almighty-services-cpt/prices-columns', array() );
 
 	return $result;
-}
-
-
-add_filter( 'post_type_link', 'remove_services_cpt_slug', 10, 3 );
-function remove_services_cpt_slug( $post_link, $post, $leavename ) {
-
-    if ( 'services' != $post->post_type || 'publish' != $post->post_status ) {
-        return $post_link;
-    }
-
-    $post_link = str_replace( '/' . $post->post_type . '/', '/', $post_link );
-
-    return $post_link;
-}
-
-add_action( 'pre_get_posts', 'add_cpt_post_names_to_main_query' );
-function add_cpt_post_names_to_main_query( $query ) {
- if ( ! $query->is_main_query() ) {
-     return;
- }
-
- // if this query doesn't match our very specific rewrite rule.
- if ( ! isset( $query->query['page'] ) || 2 !== count( $query->query ) ) {
-     return;
- }
-
- // if we're not querying based on the post name.
- if ( empty( $query->query['name'] ) ) {
-     return;
- }
- 
- // Add CPT to the list of post types WP will include when it queries based on the post name.
- $query->set( 'post_type', array( 'post', 'page', 'services' ) );
 }
 
 register_activation_hook(__FILE__,'my_custom_plugin_activate');
