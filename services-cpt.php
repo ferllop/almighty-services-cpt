@@ -42,7 +42,7 @@ if ( ! function_exists('almighty_services_post_type') ) {
 			'filter_items_list'     => __( 'Filter services list', 'almighty-services-cpt' ),
 		);
 		$rewrite = array(
-			'slug'                  => '/',
+			'slug'                  => '/services',
 			'with_front'            => false
 		);
 		$args = array(
@@ -89,6 +89,18 @@ function build_template(){
 }
 
 
+add_filter( 'post_type_link', 'remove_services_cpt_slug', 10, 3 );
+function remove_services_cpt_slug( $post_link, $post, $leavename ) {
+
+    if ( 'services' != $post->post_type || 'publish' != $post->post_status ) {
+        return $post_link;
+    }
+
+    $post_link = str_replace( '/' . $post->post_type . '/', '/', $post_link );
+
+    return $post_link;
+}
+
 add_action( 'pre_get_posts', 'add_cpt_post_names_to_main_query' );
 function add_cpt_post_names_to_main_query( $query ) {
  if ( ! $query->is_main_query() ) {
@@ -104,7 +116,7 @@ function add_cpt_post_names_to_main_query( $query ) {
  if ( empty( $query->query['name'] ) ) {
      return;
  }
-
+ 
  // Add CPT to the list of post types WP will include when it queries based on the post name.
  $query->set( 'post_type', array( 'post', 'page', 'services' ) );
 }
