@@ -122,6 +122,7 @@ function add_cpt_post_names_to_main_query( $query ) {
 }
 
 register_activation_hook(__FILE__,'my_custom_plugin_activate');
+register_deactivation_hook(__FILE__,'my_custom_plugin_activate');
 function my_custom_plugin_activate() {
     flush_rewrite_rules();
 }
